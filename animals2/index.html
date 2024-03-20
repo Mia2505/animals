@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List animals</title>
+    <style>
+        img {
+            width: 100px;
+            height: 100px;
+        }
+        #animalList{
+            margin-bottom: 20px;
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Add Animal Form -->
+    <form id="addAnimalForm">
+        <label for="animalName">Name:</label>
+        <input type="text" id="animalName" name="animalName" required><br>
+        <label for="animalImage">Image URL:</label>
+        <input type="text" id="animalImage" name="animalImage" required><br>
+        <label for="animalPrice">Price:</label>
+        <input type="number" id="animalPrice" name="animalPrice" required><br>
+        <button type="submit">Add Animal</button>
+    </form>
+
+    <div id="animalList"></div>
+
+    <script>
+        document.getElementById("addAnimalForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const animal = {
+                name: formData.get("animalName"),
+                image: formData.get("animalImage"),
+                price: parseFloat(formData.get("animalPrice"))
+            };
+            await addAnimal(animal);
+        });
+
+        async function addAnimal(animal) {
+            try {
+                const response = await fetch('/api/add-animal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(animal)
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to add animal');
+                }
+                fetchAnimals(); // Reload the animal list after adding
+            } catch (error) {
+                console.error('Error adding animal:', error);
+            }
+        }
+    </script>
+    <script>
+        // async function fetchAnimals() {
+        //     try {
+        //         const response = await fetch('/api/animals');
+        //         const data = await response.json();
+
+        //         const animalListDiv = document.getElementById('animalList');
+
+        //         animalListDiv.innerHTML = '';
+
+        //         for (const animal of data) {
+        //             const animalDiv = document.createElement('div')
+        //             animalDiv.className = 'animal-item'
+
+        //             const img = document.createElement('img')
+        //             img.src = animal.image
+        //             img.alt = animal.name
+        //             img.className = 'animal-image'
+        //             animalDiv.appendChild(img)
+
+        //             const nameDiv = document.createElement('div')
+        //             nameDiv.textContent = animal.name
+        //             nameDiv.className = 'animal-name'
+        //             animalDiv.appendChild(nameDiv)
+
+        //             animalListDiv.appendChild(animalDiv)
+        //         }
+        //     } catch (error) {
+        //         console.log('Error fetching data: ', error);
+        //     }
+        // }
+
+        // fetchAnimals();
+
+
+
+        async function fetchAnimals() {
+            try {
+                const response = await fetch('/api/animals');
+                const data = await response.json();
+
+                const animalListDiv = document.getElementById('animalList');
+
+                animalListDiv.innerHTML = '';
+
+                for (const animal of data) {
+                    const animalDiv = document.createElement('div')
+                    animalDiv.className = 'animal-item'
+
+                    const img = document.createElement('img')
+                    img.src = animal.image
+                    img.alt = animal.name
+                    img.className = 'animal-image'
+                    animalDiv.appendChild(img)
+
+                    const nameDiv = document.createElement('div')
+                    nameDiv.textContent = animal.name
+                    nameDiv.className = 'animal-name'
+                    animalDiv.appendChild(nameDiv)
+
+                    const priceDiv = document.createElement('div')
+                    priceDiv.textContent = `Price: ${animal.price}`
+                    priceDiv.className = 'animal-price'
+                    animalDiv.appendChild(priceDiv)
+
+                    animalListDiv.appendChild(animalDiv)
+                }
+            } catch (error) {
+                console.log('Error fetching data: ', error);
+            }
+        }
+
+        fetchAnimals();
+
+    </script>
+</body>
+
+</html>

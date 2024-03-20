@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test 1 with Golang</title>
+    <style>
+        img {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- Container for displaying animals -->
+    <div id="animalList"></div>
+
+    <script>
+        // fetch data from API and build HTML elements
+        async function fetchAnimals() {
+            try {
+                const response = await fetch('/api/animals');
+                const data = await response.json();
+                
+                const animalListDiv = document.getElementById('animalList');
+                // Clear any existing content
+                animalListDiv.innerHTML = '';
+
+                // Iterate over the list of animals 
+                for (const animal of data) {
+                    const animalDiv = document.createElement('div');
+                    animalDiv.className = 'animal-item';
+
+                    // Create image element
+                    const img = document.createElement('img');
+                    img.src = animal.imageUrl;
+                    img.alt = animal.name;
+                    img.className = 'animal-image';
+                    animalDiv.appendChild(img);
+
+                    // Create name element
+                    const nameDiv = document.createElement('div');
+                    nameDiv.textContent = animal.name;
+                    nameDiv.className = 'animal-name';
+                    animalDiv.appendChild(nameDiv);
+
+                    animalListDiv.appendChild(animalDiv);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        
+        fetchAnimals();
+    </script>
+</body>
+</html>
